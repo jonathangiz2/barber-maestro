@@ -8,11 +8,11 @@ Página web profesional, moderna y 100% responsive para la barbería **BARBER MA
 
 - **Página principal (Hero)**: Presentación de marca (*«Tu estilo, nuestro trabajo»*) con acceso directo a reservas y tarifas.
 - **Nuestros Servicios**: Tarjetas interactivas con precio, duración (30 min) y botón directo que preselecciona el servicio en el formulario.
-- **Sistema de Reservas Automáticas**:
-  - Muestra la fecha de hoy por defecto y los tramos horarios según el día de la semana.
-  - Diferencia visualmente entre horarios **Disponibles** y **Ocupados**.
+- **Sistema de Reservas Automáticas y Cuentas**:
+  - **Registro / Inicio de sesión obligatorio** con Gmail (`@gmail.com`, sin duplicados) y contraseña (mínimo 6 caracteres) mediante **Firebase Authentication**.
+  - Muestra la fecha de hoy por defecto y diferencia visualmente entre horarios **Disponibles** y **Ocupados**.
   - Valida el teléfono (solo dígitos, 9–15 caracteres).
-  - Guarda la cita en **Firebase Realtime Database** evitando reservas duplicadas.
+  - **Cancelación limpia de citas**: Los clientes pueden ver sus citas en *Mis Citas* y cancelarlas hasta **2 horas antes** de la hora reservada (liberando el hueco automáticamente). Si falta menos tiempo, deben avisar por WhatsApp para no perjudicar a la barbería.
   - Sincronización opcional con **Google Calendar** mediante Netlify Functions.
 - **Galería de trabajos**: Imágenes optimizadas con carga diferida (`loading="lazy"`).
 - **Horarios y Ubicación**: Lista visual de horarios (resaltando el día actual), botón a **Google Maps** y botón de **WhatsApp** exclusivo para consultas.
@@ -51,7 +51,8 @@ Barberia/
 ## 🔥 Cómo conseguir la API de Firebase y configurar `.env`
 
 1. Entra en [Firebase Console](https://console.firebase.google.com/) y crea un proyecto (o abre el existente).
-2. En el menú lateral, ve a **Compilación → Realtime Database** y pulsa **Crear base de datos** (elige la región `europe-west1` si estás en España).
+2. En el menú lateral, ve a **Compilación → Authentication → Método de inicio de sesión** y activa **Correo electrónico/contraseña**.
+3. Ve a **Compilación → Realtime Database** y pulsa **Crear base de datos** (elige la región `europe-west1` si estás en España).
 3. Ve a **Configuración del proyecto** (icono de engranaje) → **Tus apps** → añade una app **Web (`</>`)**.
 4. Copia los valores de `firebaseConfig`.
 5. Crea un archivo `.env` en la raíz del proyecto basándote en `.env.example`:
@@ -77,22 +78,47 @@ GOOGLE_PRIVATE_KEY=
 
 ## 🔒 Reglas recomendadas para Firebase Realtime Database
 
-En **Realtime Database → Reglas**, pega estas reglas para permitir que los clientes vean qué horas están ocupadas y creen reservas nuevas **sin poder sobrescribir ni borrar** citas ya existentes:
+En **Realtime Database → Reglas**, pega estas reglas para permitir:
+- Leer qué horas están ocupadas.
+- Guardar el perfil de cada usuario en `users/{uid}`.
+- Crear reservas con estado `paid: false` y cancelar solo **sus propias** citas.
 
 ```json
 {
   "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
     "bookings": {
       "$date": {
         ".read": true,
         "$time": {
-          ".write": "!data.exists() && newData.hasChildren(['service', 'name', 'phone', 'date', 'time'])"
+          ".write": "auth != null && ((!data.exists() && newData.child('userId').val() == auth.uid && newData.hasChildren(['service', 'name', 'phone', 'date', 'time', 'userId', 'paid'])) || (data.exists() && data.child('userId').val() == auth.uid && !newData.exists()))"
         }
       }
     }
   }
 }
 ```
+
+---
+
+## 📲 Cómo añadir verificación por SMS o WhatsApp al crear cuenta
+
+Si quieres que el cliente reciba un código de verificación antes de activar su cuenta:
+
+### Opción A: Verificación por SMS (Gratuita con Firebase Phone Auth)
+1. En **Firebase Console → Authentication → Método de inicio de sesión**, activa **Teléfono**.
+2. Añade el dominio de tu web (por ejemplo `tu-web.netlify.app`) en **Configuración → Dominios autorizados**.
+3. En el frontend, usa `RecaptchaVerifier` y `signInWithPhoneNumber(auth, '+34' + telefono, recaptcha)` de `firebase-auth.js` para enviar el SMS y confirmar el código de 6 dígitos.
+
+### Opción B: Verificación por WhatsApp (Netlify Functions + WhatsApp Cloud API)
+1. Crea una app en [Meta for Developers](https://developers.facebook.com/) y activa **WhatsApp Business Cloud API** (tiene 1.000 conversaciones gratuitas al mes).
+2. Crea una función en `netlify/functions/send-whatsapp-code.js` que envíe un código de 6 dígitos al número del cliente usando tu `WHATSAPP_TOKEN` y `PHONE_NUMBER_ID` en `.env`.
+3. Guarda el código temporal en Firebase (`verifications/{phone}`) y valídalo antes de llamar a `registerUser()`.
 
 ---
 

@@ -31,13 +31,19 @@
 
       <nav class="nav" id="nav">
         <ul class="nav__list">
-          <li><a href="#inicio" class="nav__link active">Inicio</a></li>
-          <li><a href="#servicios" class="nav__link">Servicios</a></li>
-          <li><a href="#reservar" class="nav__link">Reservar</a></li>
-          <li><a href="#galeria" class="nav__link">Galería</a></li>
-          <li><a href="#contacto" class="nav__link">Contacto</a></li>
+          <li><a href="#inicio" class="nav__link active" data-i18n="nav_home">Inicio</a></li>
+          <li><a href="#servicios" class="nav__link" data-i18n="nav_services">Servicios</a></li>
+          <li><a href="#cuenta" class="nav__link" data-i18n="nav_account">Mi Cuenta</a></li>
+          <li><a href="#reservar" class="nav__link" data-i18n="nav_book">Reservar</a></li>
+          <li><a href="#galeria" class="nav__link" data-i18n="nav_gallery">Galería</a></li>
+          <li><a href="#contacto" class="nav__link" data-i18n="nav_contact">Contacto</a></li>
         </ul>
-        <a href="#reservar" class="btn btn--primary nav__cta">Reservar Cita</a>
+        <select id="lang-select" class="lang-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+          <option value="ar">Darija</option>
+        </select>
+        <a href="#reservar" class="btn btn--primary nav__cta" data-i18n="nav_cta">Reservar Cita</a>
       </nav>
     </div>
   </header>
@@ -73,6 +79,53 @@
       </div>
     </section>
 
+    <!-- Account Section -->
+    <section class="section" id="cuenta">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Área de Clientes</span>
+          <h2 class="section__title">Mi Cuenta</h2>
+          <p class="section__subtitle">Inicia sesión o crea tu cuenta con Gmail para reservar y gestionar tus citas.</p>
+        </div>
+
+        <div class="booking-card">
+          <div class="auth-box" id="auth-box">
+            <div class="auth-tabs">
+              <button type="button" class="auth-tab is-active" data-auth-tab="login">Iniciar Sesión</button>
+              <button type="button" class="auth-tab" data-auth-tab="register">Crear Cuenta</button>
+            </div>
+            <form class="form" id="auth-form">
+              <div class="form__row">
+                <div class="form__group">
+                  <label for="auth-email" class="form__label" data-i18n="auth_email">Gmail o Teléfono</label>
+                  <input type="text" id="auth-email" class="form__input" required
+                    placeholder="tunombre@gmail.com o 612345678">
+                </div>
+                <div class="form__group">
+                  <label for="auth-password" class="form__label">Contraseña (mín. 6 caracteres)</label>
+                  <input type="password" id="auth-password" class="form__input" minlength="6" required
+                    placeholder="••••••">
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary" id="auth-submit">Iniciar Sesión</button>
+              <div class="form__feedback" id="auth-feedback" role="status"></div>
+            </form>
+          </div>
+
+          <div class="user-bar" id="user-bar" hidden>
+            <span>Conectado como: <strong id="user-email"></strong></span>
+            <button type="button" class="btn btn--outline btn--sm" id="logout-btn">Cerrar sesión</button>
+          </div>
+
+          <div class="my-bookings" id="my-bookings-box" hidden>
+            <h3 class="my-bookings__title">Mis Citas</h3>
+            <p class="my-bookings__policy">Puedes cancelar tu cita hasta 2 horas antes de la hora reservada.</p>
+            <div class="my-bookings__list" id="my-bookings-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Automatic Booking Section -->
     <section class="section section--alt" id="reservar">
       <div class="container">
@@ -82,49 +135,58 @@
           <p class="section__subtitle">Confirmación inmediata. Selecciona servicio, fecha y una hora disponible.</p>
         </div>
 
-        <form class="booking-card form" id="booking-form">
-          <div class="form__row">
-            <div class="form__group">
-              <label for="booking-service" class="form__label">1. Elige el servicio (30 min)</label>
-              <select id="booking-service" class="form__input" required></select>
-            </div>
-            <div class="form__group">
-              <label for="booking-date" class="form__label">2. Selecciona la fecha</label>
-              <input type="date" id="booking-date" class="form__input" required>
-            </div>
+        <div class="booking-card">
+          <div class="slots-placeholder" id="booking-auth-notice">
+            <p style="margin-bottom: 1rem;">Para reservar una cita necesitas iniciar sesión o crear una cuenta en
+              <strong>Mi Cuenta</strong>.</p>
+            <a href="#cuenta" class="btn btn--primary">Ir a Mi Cuenta</a>
           </div>
 
-          <div class="form__group">
-            <div class="slots-header">
-              <label class="form__label">3. Elige tu hora</label>
-              <div class="slots-legend">
-                <span class="legend-item"><i class="legend-dot legend-dot--free"></i> Disponible</span>
-                <span class="legend-item"><i class="legend-dot legend-dot--busy"></i> Ocupado</span>
+          <!-- Booking Form -->
+          <form class="form" id="booking-form" hidden>
+            <div class="form__row">
+              <div class="form__group">
+                <label for="booking-service" class="form__label">1. Elige el servicio (30 min)</label>
+                <select id="booking-service" class="form__input" required></select>
+              </div>
+              <div class="form__group">
+                <label for="booking-date" class="form__label">2. Selecciona la fecha</label>
+                <input type="date" id="booking-date" class="form__input" required>
               </div>
             </div>
-            <div class="slots-grid" id="slots-container">
-              <p class="slots-placeholder">Selecciona una fecha para ver los horarios.</p>
-            </div>
-            <input type="hidden" id="booking-time" required>
-          </div>
 
-          <div class="form__row">
             <div class="form__group">
-              <label for="client-name" class="form__label">4. Tu nombre completo</label>
-              <input type="text" id="client-name" class="form__input" required placeholder="Ej. Carlos Pérez">
+              <div class="slots-header">
+                <label class="form__label">3. Elige tu hora</label>
+                <div class="slots-legend">
+                  <span class="legend-item"><i class="legend-dot legend-dot--free"></i> Disponible</span>
+                  <span class="legend-item"><i class="legend-dot legend-dot--busy"></i> Ocupado</span>
+                </div>
+              </div>
+              <div class="slots-grid" id="slots-container">
+                <p class="slots-placeholder">Selecciona una fecha para ver los horarios.</p>
+              </div>
+              <input type="hidden" id="booking-time" required>
             </div>
-            <div class="form__group">
-              <label for="client-phone" class="form__label">5. Tu teléfono (solo números)</label>
-              <input type="tel" id="client-phone" class="form__input" inputmode="numeric" pattern="[0-9]{9,15}"
-                minlength="9" maxlength="15" required placeholder="Ej. 612345678">
-            </div>
-          </div>
 
-          <button type="submit" class="btn btn--primary btn--lg btn--full" id="booking-submit">
-            Confirmar Reserva Automática
-          </button>
-          <div class="form__feedback" id="booking-feedback" role="status" aria-live="polite"></div>
-        </form>
+            <div class="form__row">
+              <div class="form__group">
+                <label for="client-name" class="form__label">4. Tu nombre completo</label>
+                <input type="text" id="client-name" class="form__input" required placeholder="Ej. Carlos Pérez">
+              </div>
+              <div class="form__group">
+                <label for="client-phone" class="form__label">5. Tu teléfono (solo números)</label>
+                <input type="tel" id="client-phone" class="form__input" inputmode="numeric" pattern="[0-9]{9,15}"
+                  minlength="9" maxlength="15" required placeholder="Ej. 612345678">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--lg btn--full" id="booking-submit">
+              Confirmar Reserva Automática
+            </button>
+            <div class="form__feedback" id="booking-feedback" role="status" aria-live="polite"></div>
+          </form>
+        </div>
       </div>
     </section>
 
