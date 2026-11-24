@@ -1,15 +1,22 @@
 import { initNavigation } from './modules/navigation.js';
-import { renderServices, renderBarbers } from './modules/renderer.js';
+import { loadBarberiaData, renderServices, renderGallery, renderHours } from './modules/renderer.js';
 import { initBooking } from './modules/booking.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  initNavigation();
-  renderServices();
-  renderBarbers();
-  initBooking();
+  document.addEventListener('DOMContentLoaded', async () => {
+    initNavigation();
 
-  const yearEl = document.getElementById('year');
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
-});
+    try {
+      const data = await loadBarberiaData();
+      renderServices(data.services);
+      renderGallery(data.gallery);
+      renderHours(data.hours, data.hoursOrder);
+      initBooking(data.services, data.hours);
+    } catch (err) {
+      console.error(err);
+    }
+
+    const yearEl = document.getElementById('year');
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
+    }
+  });
