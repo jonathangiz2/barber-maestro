@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Barbería Clásica & Moderna - Cortes de precisión, arreglo de barba y cuidado masculino.">
+  <title>La Navaja Dorada | Barbería</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <header class="header" id="header">
+    <div class="container header__container">
+      <a href="#inicio" class="logo">
+        <span class="logo__icon">✂</span>
+        <span class="logo__text">LA NAVAJA <strong>DORADA</strong></span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+
+      <nav class="nav" id="nav">
+        <ul class="nav__list">
+          <li><a href="#inicio" class="nav__link active">Inicio</a></li>
+          <li><a href="#servicios" class="nav__link">Servicios</a></li>
+          <li><a href="#equipo" class="nav__link">Barberos</a></li>
+          <li><a href="#contacto" class="nav__link">Contacto</a></li>
+        </ul>
+        <button class="btn btn--primary nav__cta" data-open-booking>Reservar Cita</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <span class="hero__badge">Desde 2015 • Estilo & Tradición</span>
+        <h1 class="hero__title">Cortes de Precisión y Cuidado Masculino</h1>
+        <p class="hero__subtitle">
+          Combinamos técnicas clásicas de barbería con las últimas tendencias para que salgas con tu mejor versión.
+        </p>
+        <div class="hero__actions">
+          <button class="btn btn--primary btn--lg" data-open-booking>Reservar Ahora</button>
+          <a href="#servicios" class="btn btn--outline btn--lg">Ver Servicios</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="servicios">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">Nuestros Servicios</span>
+          <h2 class="section__title">Tarifas y Tratamientos</h2>
+          <p class="section__subtitle">Cada servicio incluye asesoramiento personalizado y productos de primera calidad.</p>
+        </div>
+        <div class="grid grid--3" id="services-grid">
+          <!-- Rendered dynamically by js/modules/renderer.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section section--alt" id="equipo">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__tag">El Equipo</span>
+          <h2 class="section__title">Maestros Barberos</h2>
+          <p class="section__subtitle">Profesionales apasionados por el detalle y la navaja.</p>
+        </div>
+        <div class="grid grid--3" id="barbers-grid">
+          <!-- Rendered dynamically by js/modules/renderer.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact & Hours Section -->
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="contact-grid">
+          <div class="contact-info">
+            <span class="section__tag">Visítanos</span>
+            <h2 class="section__title">Horarios y Ubicación</h2>
+            <p class="contact-info__text">Te esperamos en nuestro local con café de cortesía y el mejor ambiente.</p>
+            <ul class="contact-list">
+              <li><strong>Dirección:</strong> Calle Mayor 42, Centro</li>
+              <li><strong>Teléfono:</strong> +34 600 123 456</li>
+              <li><strong>Email:</strong> citas@lanavajadorada.es</li>
+            </ul>
+          </div>
+          <div class="hours-card">
+            <h3 class="hours-card__title">Horario de Atención</h3>
+            <ul class="hours-list">
+              <li><span>Lunes - Viernes</span><span>10:00 - 20:30</span></li>
+              <li><span>Sábados</span><span>09:30 - 18:00</span></li>
+              <li><span>Domingos</span><span>Cerrado</span></li>
+            </ul>
+            <button class="btn btn--primary btn--full" data-open-booking>Agendar Cita</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__container">
+      <p>&copy; <span id="year"></span> La Navaja Dorada. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Booking Modal -->
+  <div class="modal" id="booking-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal__backdrop" data-close-booking></div>
+    <div class="modal__dialog">
+      <button class="modal__close" data-close-booking aria-label="Cerrar">&times;</button>
+      <h2 class="modal__title" id="modal-title">Reservar Cita</h2>
+      <form class="form" id="booking-form">
+        <div class="form__group">
+          <label for="client-name" class="form__label">Nombre completo</label>
+          <input type="text" id="client-name" class="form__input" required placeholder="Ej. Carlos Pérez">
+        </div>
+        <div class="form__group">
+          <label for="client-phone" class="form__label">Teléfono</label>
+          <input type="tel" id="client-phone" class="form__input" required placeholder="Ej. 600 123 456">
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label for="booking-service" class="form__label">Servicio</label>
+            <select id="booking-service" class="form__input" required></select>
+          </div>
+          <div class="form__group">
+            <label for="booking-barber" class="form__label">Barbero</label>
+            <select id="booking-barber" class="form__input" required></select>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label for="booking-date" class="form__label">Fecha</label>
+            <input type="date" id="booking-date" class="form__input" required>
+          </div>
+          <div class="form__group">
+            <label for="booking-time" class="form__label">Hora</label>
+            <select id="booking-time" class="form__input" required>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="12:30">12:30</option>
+              <option value="16:00">16:00</option>
+              <option value="17:30">17:30</option>
+              <option value="19:00">19:00</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Confirmar Reserva</button>
+        <p class="form__feedback" id="booking-feedback" role="status"></p>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
